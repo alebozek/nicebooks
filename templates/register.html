@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - NiceBooks</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <!-- reciclar es bueno -->
+    <h1>NiceBooks</h1>
+    {{ if .error }}
+        <p style="color: red">{{ .error }}</p>
+    {{ end }}
+    <div class="login">
+        <h2>Register</h2>
+        <form action="/register-endpoint" method="POST">
+            <label class="userlogin" for="email">Email: </label><br>
+            <input class="userlogin" type="email" name="email" maxlength="50"><br>
+            <label for="user">Username:</label><br>
+            <input class="userlogin" type="text" name="user" maxlength="20" required><br>
+            <label for="pass">Password:</label><br>
+            <input id="password" class="userlogin" type="password" name="pass" required><br>
+            <p style="color: red; font-size: 11px;">Password must have at least an uppercase character, a lowercase character, a number and a special character.<br> Also it must have 8 characters at least.</p>
+            <button onclick="location.href = '/'">Back</button>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+h1 {
+    color: #04724d;
+    font-size: 2.5em;
+}
+
+body {
+    background-color: #f4f4f9;
+}
+
+.login{
+    background-color: white;
+    width: 40vh;
+    border: 1px #586F7C solid;
+    border-radius: 20px;
+    margin: auto;
+    text-align: center;
+    min-width: 40vh;
+}
+
+h1, h2, label, p, button{
+    font-family: Roboto, sans-serif;
+    text-align: center;
+}
+
+.userlogin {
+    width: 20vh;
+    border: 1px #586F7C solid;
+    border-radius: 5px;
+}
+
+button {
+    width: 5em;
+    background-color: #04724d;
+    color: white;
+    border: 1px solid #586F7C;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 5px;
+    margin: 20px 5px;
+}
+
+.hidden {
+    display: none;
+}
+.visible {
+    display: block;
+}

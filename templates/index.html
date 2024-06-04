@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NiceBooks</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <h1>NiceBooks</h1>
+    {{ if .error }}
+        <p style="color: red">{{ .error }}</p>
+    {{ end }}
+    <div class="login">
+        <h2>Login</h2>
+        <form action="/login-endpoint" method="POST">
+            <label for="user">Username:</label><br>
+            <input class="userlogin" minlength="5" type="text" name="user" maxlength="20" required><br>
+            <label for="pass">Password:</label><br>
+            <input class="userlogin" minlength="10" type="password" name="pass" required><br>
+            <button type="submit">Login</button>
+            <button onclick="location.href = '/register'">Register</button>
+        </form>
+    </div>
+</body>
+</html>
