@@ -8,9 +8,10 @@ import (
 	"net/http"
 	"nicebooks/models"
 	"regexp"
+	"time"
 )
 
-// Comprueba si los campos del usuario no están vacíos y si el usuario no existe
+// Comprueba si los campos proporcionados por el usuario cumplen con las normativas de seguridad y si el usuario no existe
 func ValidateUser(user models.User, DB *sql.DB) bool {
 	var userOK bool = false
 	// creamos comprobadores de regex para los datos del usuario
@@ -66,7 +67,7 @@ func Register(c *gin.Context, DB *sql.DB) {
 	}
 }
 
-// Comprueba que los credenciales provistos por el usuario y en caso de ser válidos redirecciona a la página del dashboard.
+// Comprueba las credenciales provistas por el usuario y en caso de ser válidos redirecciona a la página del dashboard.
 // En caso de no ser válidos mostramos un error en la página de login.
 func Login(c *gin.Context, DB *sql.DB) {
 	// recogemos los datos y los guardamos en la variable user
@@ -107,4 +108,40 @@ func CheckCookies(c *gin.Context, DB *sql.DB) bool {
 	}
 
 	return validToken
+}
+
+// Permite que los usuarios añadan libros a la base de datos
+func AddBook(c *gin.Context, DB *sql.DB) {
+	// Recogemos los datos introducidos por el usuario
+	var book models.Book
+	var err error
+	book.Title = c.PostForm("title")
+	book.Author = c.PostForm("author")
+	book.Pubdate, err = time.Parse("2006-02-01", c.PostForm("pubdate"))
+	if err != nil {
+		log.Println(err.Error())
+		c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Error when adding the book."})
+	}
+
+	// Comprobamos que el libro no exista ya de por sí
+	var count int
+	err = DB.QueryRow("SELECT COUNT(*) FROM Books WHERE title LIKE '%' + @title + '%' AND author LIKE '%' + @author + '½'",
+		sql.Named("title", book.Title), sql.Named("author", book.Author)).Scan(&count)
+	if err != nil {
+		log.Println(err.Error())
+		c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Error when adding the book."})
+	}
+	// si existe se redirecciona al usuario mostrando un enlace de error y si no, se inserta
+	if count > 0 {
+		c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Book already exists."})
+	} else {
+		_, err = DB.Exec("INSERT INTO Books (title, author, pubdate) VALUES(@title, @author, @pubdate)",
+			sql.Named("title", book.Title), sql.Named("author", book.Author), sql.Named("pubdate", book.Pubdate))
+		if err != nil {
+			log.Println(err.Error())
+			c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Couldn't add the book."})
+		}
+		AddRead(c, DB)
+	}
+
 }

@@ -36,20 +36,43 @@ func main() {
 	// comprobamos que la cookie asignada por el endpoint del login es válida y en ese caso carga la página del dashboard
 	router.GET("/dashboard", func(c *gin.Context) {
 		if controller.CheckCookies(c, DB) {
-			c.HTML(http.StatusOK, "dashboard.html", nil)
+			token, _ := c.Cookie("token")
+			books := controller.GetBooksReadByUser(DB, token)
+			c.HTML(http.StatusOK, "dashboard.html", books)
+		} else {
+			c.HTML(http.StatusOK, "index.html", gin.H{"error": "Invalid credentials."})
+		}
+	})
+
+	router.GET("/add-book", func(c *gin.Context) {
+		if controller.CheckCookies(c, DB) {
+			c.HTML(http.StatusOK, "addbook.html", nil)
+		} else {
+			c.HTML(http.StatusOK, "index.html", gin.H{"error": "Invalid credentials."})
+		}
+	})
+
+	router.POST("/add-book", func(c *gin.Context) {
+		if controller.CheckCookies(c, DB) {
+			controller.AddBook(c, DB)
 		} else {
 			c.HTML(http.StatusOK, "index.html", gin.H{"error": "Invalid credentials."})
 		}
 	})
 
 	// registro de usuarios
-	router.POST("/register-endpoint", func(c *gin.Context) {
+	router.POST("/register", func(c *gin.Context) {
 		controller.Register(c, DB)
 	})
 
 	// comprobación de credenciales de login
-	router.POST("/login-endpoint", func(c *gin.Context) {
+	router.POST("/login", func(c *gin.Context) {
 		controller.Login(c, DB)
+	})
+
+	// añade libros que el usuario ha leído
+	router.POST("/add-read", func(c *gin.Context) {
+		controller.AddRead(c, DB)
 	})
 
 	// comprobamos que no se producen errores y si se producen, se mostrarán por pantalla

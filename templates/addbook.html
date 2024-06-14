@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Book? - NiceBooks</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="addbook">
+        <h1>Oh!</h1>
+        <h2>We don't know about that book. <br>Would you mind talking to us about it?</h2>
+        <form action="add-book" method="POST">
+            <label>Title:</label><br>
+            <input type="text" name="title"><br>
+            <label>Author:</label><br>
+            <input type="text" name="author"><br>
+            <label>Publication date:</label><br>
+            <input type="date" name="pubdate"><br>
+            <button type="submit">Send</button>
+            {{ if .error }}
+                <p style="color: red">{{ .error }}</p>
+            {{ end }}
+        </form>
+    </div>
+</body>
+</html>

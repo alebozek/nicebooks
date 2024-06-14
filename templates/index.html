@@ -12,11 +12,11 @@
     {{ end }}
     <div class="login">
         <h2>Login</h2>
-        <form action="/login-endpoint" method="POST">
+        <form action="/login" method="POST">
             <label for="user">Username:</label><br>
-            <input class="userlogin" minlength="5" type="text" name="user" maxlength="20" required><br>
+            <input id="user" minlength="5" type="text" name="user" maxlength="20" required><br>
             <label for="pass">Password:</label><br>
-            <input class="userlogin" minlength="10" type="password" name="pass" required><br>
+            <input id="pass" minlength="10" type="password" name="pass" required><br>
             <button type="submit">Login</button>
             <button onclick="location.href = '/register'">Register</button>
         </form>

@@ -7,5 +7,36 @@
 </head>
 <body>
     <h1>Dashboard</h1>
+    <div>
+        <div class="addreads">
+            <h2>Add a new read</h2>
+            <form action="/add-read" method="POST">
+                <label>Title of the Book:</label><br>
+                <input type="text" name="title"><br>
+                <button>Add</button>
+            </form>
+        </div>
+        <div class="reads">
+            <h2>Your reads</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Publication date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range . }}
+                    <tr>
+                        <td>{{ .Title }}</td>
+                        <td>{{ .Author }}</td>
+                        <td>{{ .TransformDate }}</td>
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
