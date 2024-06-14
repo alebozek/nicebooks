@@ -1,4 +1,0 @@
-payne's gray -> 586F7C
-ligth blue -> b8dbd9
-ghost white -> f4f4f9
-dark spring green -> 04724d
