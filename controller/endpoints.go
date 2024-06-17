@@ -12,6 +12,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const DOMAIN = "nicebooks.onrender.com"
+
 // Comprueba si los campos proporcionados por el usuario cumplen con las normativas de seguridad y si el usuario no existe
 func ValidateUser(user models.User, DB *sql.DB) bool {
 	var userOK bool = false
@@ -61,7 +63,7 @@ func Register(c *gin.Context, DB *sql.DB) {
 		if err != nil {
 			c.HTML(http.StatusOK, "register.html", gin.H{"error": err.Error()})
 		}
-		c.SetCookie("token", user.Username+":"+user.Password, 3600, "/", "nicebooks.onrender.com", false, true)
+		c.SetCookie("token", user.Username+":"+user.Password, 3600, "/", DOMAIN, false, true)
 		c.Redirect(http.StatusSeeOther, "/")
 	} else {
 		c.HTML(http.StatusOK, "register.html", gin.H{"error": "Invalid user or already exists."})
@@ -88,7 +90,7 @@ func Login(c *gin.Context, DB *sql.DB) {
 	if err != nil {
 		c.HTML(http.StatusOK, "index.html", gin.H{"error": "Credentials are incorrect or user does not exist."})
 	} else {
-		c.SetCookie("token", user.Username+":"+hashedPassword, 3600, "/", "nicebooks.onrender.com", true, true)
+		c.SetCookie("token", user.Username+":"+hashedPassword, 3600, "/", DOMAIN, true, true)
 		c.Redirect(http.StatusSeeOther, "/dashboard")
 	}
 }
@@ -118,32 +120,31 @@ func AddBook(c *gin.Context, DB *sql.DB) {
 	var err error
 	book.Title = c.PostForm("title")
 	book.Author = c.PostForm("author")
-	book.Pubdate, err = time.Parse("2006-02-01", c.PostForm("pubdate"))
+	book.Pubdate, err = time.Parse("2006-01-02", c.PostForm("pubdate"))
 	if err != nil {
 		log.Println(err.Error())
 		c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Error when adding the book."})
-	}
-
-	// Comprobamos que el libro no exista ya de por sí
-	var count int
-	err = DB.QueryRow("SELECT COUNT(*) FROM Books WHERE title LIKE '%' + @title + '%' AND author LIKE '%' + @author + '½'",
-		sql.Named("title", book.Title), sql.Named("author", book.Author)).Scan(&count)
-	if err != nil {
-		log.Println(err.Error())
-		c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Error when adding the book."})
-	}
-
-	// si existe se redirecciona al usuario mostrando un enlace de error y si no, se inserta
-	if count > 0 {
-		c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Book already exists."})
 	} else {
-		_, err = DB.Exec("INSERT INTO Books (title, author, pubdate) VALUES(@title, @author, @pubdate)",
-			sql.Named("title", book.Title), sql.Named("author", book.Author), sql.Named("pubdate", book.Pubdate))
+		// Comprobamos que el libro no exista ya de por sí
+		var count int
+		err = DB.QueryRow("SELECT COUNT(*) FROM Books WHERE title LIKE '%' + @title + '%' AND author LIKE '%' + @author + '½'",
+			sql.Named("title", book.Title), sql.Named("author", book.Author)).Scan(&count)
 		if err != nil {
 			log.Println(err.Error())
-			c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Couldn't add the book."})
+			c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Error when adding the book."})
 		}
-		AddRead(c, DB)
-	}
 
+		// si existe se redirecciona al usuario mostrando un enlace de error y si no, se inserta
+		if count > 0 {
+			c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Book already exists."})
+		} else {
+			_, err = DB.Exec("INSERT INTO Books (title, author, pubdate) VALUES(@title, @author, @pubdate)",
+				sql.Named("title", book.Title), sql.Named("author", book.Author), sql.Named("pubdate", book.Pubdate))
+			if err != nil {
+				log.Println(err.Error())
+				c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Couldn't add the book."})
+			}
+			AddRead(c, DB)
+		}
+	}
 }

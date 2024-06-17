@@ -12,11 +12,11 @@
         <h2>We don't know about that book. <br>Would you mind talking to us about it?</h2>
         <form action="add-book" method="POST">
             <label>Title:</label><br>
-            <input type="text" name="title"><br>
+            <input type="text" name="title" required><br>
             <label>Author:</label><br>
-            <input type="text" name="author"><br>
+            <input type="text" name="author" required><br>
             <label>Publication date:</label><br>
-            <input type="date" name="pubdate"><br>
+            <input type="date" name="pubdate" required><br>
             <button onclick="history.back()">Back</button>
             <button type="submit">Send</button>
             {{ if .error }}
