@@ -2,13 +2,14 @@ package controller
 
 import (
 	"database/sql"
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"nicebooks/models"
 	"regexp"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Comprueba si los campos proporcionados por el usuario cumplen con las normativas de seguridad y si el usuario no existe

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Add Book? - NiceBooks</title>
     <link rel="stylesheet" href="../static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
     <div class="addbook">
@@ -16,6 +17,7 @@
             <input type="text" name="author"><br>
             <label>Publication date:</label><br>
             <input type="date" name="pubdate"><br>
+            <button onclick="history.back()">Back</button>
             <button type="submit">Send</button>
             {{ if .error }}
                 <p style="color: red">{{ .error }}</p>

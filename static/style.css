@@ -80,3 +80,28 @@ table {
     width: 100%;
 }
 
+@media (max-width: 500px) {
+    body {
+        width: 100% !important;
+        height: 100% !important;
+        font-size: 20px;
+        background-color: white;
+    }
+
+    .login{
+        border: none;
+    }
+
+    body > * {
+        margin: 5px;
+    }
+
+    label, input[type=text], input[type=password] {
+        font-size: 20px !important;
+    }
+
+    button {
+        font-size: 15px !important;
+        border-radius: 5px;
+    }
+}
