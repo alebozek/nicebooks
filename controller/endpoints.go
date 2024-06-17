@@ -87,7 +87,7 @@ func Login(c *gin.Context, DB *sql.DB) {
 	if err != nil {
 		c.HTML(http.StatusOK, "index.html", gin.H{"error": "Credentials are incorrect or user does not exist."})
 	} else {
-		c.SetCookie("token", user.Username+":"+hashedPassword, 3600, "/", "localhost", false, true)
+		c.SetCookie("token", user.Username+":"+hashedPassword, 3600, "/", "nicebooks.onrender.com", false, true)
 		c.Redirect(http.StatusSeeOther, "/dashboard")
 	}
 }
