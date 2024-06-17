@@ -61,7 +61,7 @@ func Register(c *gin.Context, DB *sql.DB) {
 		if err != nil {
 			c.HTML(http.StatusOK, "register.html", gin.H{"error": err.Error()})
 		}
-		c.SetCookie("token", user.Username+":"+user.Password, 3600, "/", "localhost", false, true)
+		c.SetCookie("token", user.Username+":"+user.Password, 3600, "/", "nicebooks.onrender.com", false, true)
 		c.Redirect(http.StatusSeeOther, "/")
 	} else {
 		c.HTML(http.StatusOK, "register.html", gin.H{"error": "Invalid user or already exists."})
@@ -88,7 +88,7 @@ func Login(c *gin.Context, DB *sql.DB) {
 	if err != nil {
 		c.HTML(http.StatusOK, "index.html", gin.H{"error": "Credentials are incorrect or user does not exist."})
 	} else {
-		c.SetCookie("token", user.Username+":"+hashedPassword, 3600, "/", "nicebooks.onrender.com", false, true)
+		c.SetCookie("token", user.Username+":"+hashedPassword, 3600, "/", "nicebooks.onrender.com", true, true)
 		c.Redirect(http.StatusSeeOther, "/dashboard")
 	}
 }
@@ -132,6 +132,7 @@ func AddBook(c *gin.Context, DB *sql.DB) {
 		log.Println(err.Error())
 		c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Error when adding the book."})
 	}
+
 	// si existe se redirecciona al usuario mostrando un enlace de error y si no, se inserta
 	if count > 0 {
 		c.HTML(http.StatusSeeOther, "addbook.html", gin.H{"error": "Book already exists."})

@@ -8,13 +8,16 @@
 </head>
 <body>
     <h1>Dashboard</h1>
-    <div>
+    <div class="main">
         <div class="addreads">
             <h2>Add a new read</h2>
             <form action="/add-read" method="POST">
                 <label>Title of the Book:</label><br>
                 <input type="text" name="title"><br>
                 <button>Add</button>
+                {{ if .Err }}
+                    <p style="color: red">{{ .Err }}</p>
+                {{ end }}
             </form>
         </div>
         <div class="reads">
@@ -28,7 +31,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{ range . }}
+                    {{ range .BookList }}
                     <tr>
                         <td>{{ .Title }}</td>
                         <td>{{ .Author }}</td>

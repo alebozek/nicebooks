@@ -33,26 +33,37 @@ func GetBooksReadByUser(DB *sql.DB, token string) (books []models.Book) {
 
 // Agrega una lectura a la base de datos y si no existe el libro redirecciona a una página para añadirlo
 func AddRead(c *gin.Context, DB *sql.DB) {
-	var count int
+	var bookExists bool
+	var readExists bool
 	// se recupera la cookie y se guardan los datos introducidos por el usuario
 	token, err := c.Cookie("token")
 	if err != nil {
 		c.HTML(http.StatusSeeOther, "index.html", gin.H{"error": "Invalid credentials"})
 	}
+
 	title := c.PostForm("title")
-	err = DB.QueryRow("SELECT COUNT(title) FROM Books WHERE title LIKE '%'+ @title + '%'", sql.Named("title", title)).Scan(&count)
+	err = DB.QueryRow("SELECT CAST(COUNT(title) as BIT) FROM Books WHERE title LIKE '%'+ @title + '%'", sql.Named("title", title)).Scan(&bookExists)
 	if err != nil {
 		log.Println(err)
 	}
+
+	err = DB.QueryRow("SELECT CAST(COUNT(*) as BIT) FROM Reads WHERE userID = dbo.GET_USER_ID(@token) AND bookID = dbo.GET_BOOK_ID(@title)",
+		sql.Named("token", token), sql.Named("title", title)).Scan(&readExists)
+	if err != nil {
+		log.Println(err)
+	}
+
 	// comprobamos que existe al menos un libro con ese título
-	if count > 0 {
+	if bookExists && !readExists {
 		_, err = DB.Exec(
 			"INSERT INTO Reads(userID, bookID) SELECT TOP 1 dbo.GET_USER_ID(@token), id FROM Books WHERE title LIKE '%'+ @title + '%'",
 			sql.Named("token", token), sql.Named("title", title))
 		if err != nil {
-			c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"error": "The book is already read"})
+			log.Println(err)
 		}
 		c.Redirect(http.StatusSeeOther, "/dashboard")
+	} else if readExists {
+		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"BookList": GetBooksReadByUser(DB, token), "Err": "Book already exists"})
 	} else {
 		c.Redirect(http.StatusSeeOther, "/add-book")
 	}

@@ -16,11 +16,11 @@ body {
 .login{
     background-color: white;
     width: 40vh;
-    border: 1px #586F7C solid;
     border-radius: 20px;
     margin: auto;
     text-align: center;
     min-width: 40vh;
+    padding: 10px;
 }
 
 h1, h2, label, p, button{
@@ -103,5 +103,25 @@ table {
     button {
         font-size: 15px !important;
         border-radius: 5px;
+    }
+}
+
+@media only screen and (min-width: 768px){
+    .reads {
+        float: right;
+        width: 60%;
+    }
+    .addreads {
+        float: left;
+        width: 30%;
+    }
+
+    .reads, .addreads {
+        padding: 20px;
+    }
+
+    .main {
+        display: flex;
+        justify-content: center;
     }
 }

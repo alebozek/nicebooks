@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"nicebooks/controller"
+	"nicebooks/models"
 )
 
 var DB *sql.DB
@@ -23,6 +24,8 @@ func main() {
 	// se sirve lo que haya en el directorio para poder tener acceso a tales elementos
 	router.Static("/static", "./static")
 
+	router.StaticFile("favicon.ico", "./static/favicon.ico")
+
 	// servimos el index
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
@@ -38,7 +41,10 @@ func main() {
 		if controller.CheckCookies(c, DB) {
 			token, _ := c.Cookie("token")
 			books := controller.GetBooksReadByUser(DB, token)
-			c.HTML(http.StatusOK, "dashboard.html", books)
+			c.HTML(http.StatusOK, "dashboard.html", struct {
+				BookList []models.Book
+				Err      error
+			}{books, nil})
 		} else {
 			c.HTML(http.StatusOK, "index.html", gin.H{"error": "Invalid credentials."})
 		}
