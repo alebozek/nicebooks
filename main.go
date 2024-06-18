@@ -9,11 +9,11 @@ import (
 	"nicebooks/models"
 )
 
-var DB *sql.DB
+var db *sql.DB
 
 func init() {
 	// obtenemos una conexion a la BD
-	DB = controller.NewConnection()
+	db = controller.NewConnection()
 }
 
 func main() {
@@ -38,9 +38,9 @@ func main() {
 
 	// comprobamos que la cookie asignada por el endpoint del login es válida y en ese caso carga la página del dashboard
 	router.GET("/dashboard", func(c *gin.Context) {
-		if controller.CheckCookies(c, DB) {
+		if controller.CheckCookies(c, db) {
 			token, _ := c.Cookie("token")
-			books := controller.GetBooksReadByUser(DB, token)
+			books := controller.GetBooksReadByUser(db, token)
 			c.HTML(http.StatusOK, "dashboard.html", struct {
 				BookList []models.Book
 				Err      error
@@ -51,7 +51,7 @@ func main() {
 	})
 
 	router.GET("/add-book", func(c *gin.Context) {
-		if controller.CheckCookies(c, DB) {
+		if controller.CheckCookies(c, db) {
 			c.HTML(http.StatusOK, "addbook.html", nil)
 		} else {
 			c.HTML(http.StatusOK, "index.html", gin.H{"error": "Invalid credentials."})
@@ -59,8 +59,8 @@ func main() {
 	})
 
 	router.POST("/add-book", func(c *gin.Context) {
-		if controller.CheckCookies(c, DB) {
-			controller.AddBook(c, DB)
+		if controller.CheckCookies(c, db) {
+			controller.AddBook(c, db)
 		} else {
 			c.HTML(http.StatusOK, "index.html", gin.H{"error": "Invalid credentials."})
 		}
@@ -68,17 +68,17 @@ func main() {
 
 	// registro de usuarios
 	router.POST("/register", func(c *gin.Context) {
-		controller.Register(c, DB)
+		controller.Register(c, db)
 	})
 
 	// comprobación de credenciales de login
 	router.POST("/login", func(c *gin.Context) {
-		controller.Login(c, DB)
+		controller.Login(c, db)
 	})
 
 	// añade libros que el usuario ha leído
 	router.POST("/add-read", func(c *gin.Context) {
-		controller.AddRead(c, DB)
+		controller.AddRead(c, db)
 	})
 
 	// comprobamos que no se producen errores y si se producen, se mostrarán por pantalla

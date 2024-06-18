@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// Devuelve la cadena de conexión a la base de datos acorde con las credenciales del fichero .env
 func loadCredentials() string {
 	err := godotenv.Load("creds.env")
 	if err != nil {

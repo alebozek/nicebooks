@@ -82,6 +82,8 @@ table {
 
 @media (max-width: 500px) {
     body {
+        margin: 0;
+        padding: 0;
         width: 100% !important;
         height: 100% !important;
         font-size: 20px;
