@@ -28,14 +28,19 @@
                         <th>Title</th>
                         <th>Author</th>
                         <th>Publication date</th>
+                        <th>¿Delete?</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{ range .BookList }}
                     <tr>
-                        <td>{{ .Title }}</td>
-                        <td>{{ .Author }}</td>
-                        <td>{{ .TransformDate }}</td>
+                        <form action="/delete-read" method="post">
+                            <input name="bookID" type="hidden" value="{{ .ID }}">
+                            <td>{{ .Title }}</td>
+                            <td>{{ .Author }}</td>
+                            <td>{{ .TransformDate }}</td>
+                            <td> <button type="submit" style="background-color:red">Delete</button></td>
+                        </form>
                     </tr>
                     {{ end }}
                 </tbody>

@@ -23,7 +23,7 @@ func main() {
 	router.LoadHTMLGlob("templates/*")
 	// se sirve lo que haya en el directorio para poder tener acceso a tales elementos
 	router.Static("/static", "./static")
-
+	// sirve el favicon
 	router.StaticFile("favicon.ico", "./static/favicon.ico")
 
 	// servimos el index
@@ -50,6 +50,7 @@ func main() {
 		}
 	})
 
+	// sirve la página de añadir libros
 	router.GET("/add-book", func(c *gin.Context) {
 		if controller.CheckCookies(c, db) {
 			c.HTML(http.StatusOK, "addbook.html", nil)
@@ -58,6 +59,7 @@ func main() {
 		}
 	})
 
+	// gestiona el formulario de añadir libros
 	router.POST("/add-book", func(c *gin.Context) {
 		if controller.CheckCookies(c, db) {
 			controller.AddBook(c, db)
@@ -79,6 +81,17 @@ func main() {
 	// añade libros que el usuario ha leído
 	router.POST("/add-read", func(c *gin.Context) {
 		controller.AddRead(c, db)
+	})
+
+	router.POST("/delete-read", func(c *gin.Context) {
+		if controller.CheckCookies(c, db) {
+			token, _ := c.Cookie("token")
+			log.Println(token)
+			controller.DeleteRead(c, db, token)
+		} else {
+			c.HTML(http.StatusSeeOther, "index.html", gin.H{"error": "Invalid credentials"})
+		}
+
 	})
 
 	// comprobamos que no se producen errores y si se producen, se mostrarán por pantalla
