@@ -106,6 +106,10 @@ table {
         font-size: 15px !important;
         border-radius: 5px;
     }
+
+    table {
+        font-size: 15px;
+    }
 }
 
 @media only screen and (min-width: 768px){
@@ -126,4 +130,5 @@ table {
         display: flex;
         justify-content: center;
     }
+    
 }
