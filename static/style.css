@@ -105,7 +105,7 @@ table {
         padding: 0;
         width: 100% !important;
         height: 100% !important;
-        font-size: 20px;
+        font-size: 4vw;
         background-color: white;
     }
 
@@ -118,7 +118,7 @@ table {
     }
 
     label, input[type=text], input[type=password] {
-        font-size: 20px !important;
+        font-size: 4vw !important;
     }
 
     button {
@@ -127,7 +127,8 @@ table {
     }
 
     table {
-        font-size: 2.4vw;
+        font-family: Roboto;
+        font-size: 2.3vw;
     }
 }
 
