@@ -63,15 +63,15 @@ button {
     border-radius: 20px;
 }
 
-.editbook{
-    font-size: 2vw;
-}
+/*.editbook{
+    font-size: 16px;
+}*/
 
-.editbook > form > input[type=text], .editbook > form > input[type=date]{
+/*.editbook > form > input[type=text], .editbook > form > input[type=date]{
     text-align: center;
-    font-size: 1.5vw;
+    font-size: 16px;
     width: 15vw !important;
-}
+}*/
 
 .addreads > form, .addbook > form, .editbook > form{
     text-align: center;
@@ -130,6 +130,17 @@ table {
         font-family: Roboto;
         font-size: 2.3vw;
     }
+
+    /*.editbook{
+        font-size: 2vw !important;
+    }
+
+    .editbook > form > input[type=text], .editbook > form > input[type=date]{
+        text-align: center;
+        font-size: 2vw;
+        width: 15vw !important;
+    }*/
+
 }
 
 /*@media only screen and (min-width: 768px){

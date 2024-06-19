@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>Edit - NiceBooks</title>
     <link rel="stylesheet" href="../static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <h1>Edit book information</h1>
     <div class="editbook">
+        <h1>Edit book information</h1>
         <form action="/edit-read" method="POST">
             <input type="hidden" name="bookid" value="{{ .book.ID }}">
             <label>Title:</label><br>
