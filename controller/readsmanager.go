@@ -19,7 +19,7 @@ func GetBooksReadByUser(db *sql.DB, token string) (books []models.Book) {
 	defer rows.Close()
 	for rows.Next() {
 		var book models.Book
-		if err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Pubdate); err != nil {
+		if err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Pubdate, &book.UserRating, &book.PublicRating); err != nil {
 			log.Println(err)
 		}
 		bookList = append(bookList, book)
@@ -37,6 +37,12 @@ func AddRead(c *gin.Context, db *sql.DB) {
 	var bookExists bool
 	// almacena si la lectura existe de antes
 	var readExists bool
+	// recogemos el título del formulario
+	title := c.PostForm("title")
+	// recogemos la calificación del formulario
+	rating := c.PostForm("rating")
+	log.Println("Rating: " + rating)
+
 	// se recupera la cookie y se guardan los datos introducidos por el usuario
 	token, err := c.Cookie("token")
 	if err != nil {
@@ -44,7 +50,6 @@ func AddRead(c *gin.Context, db *sql.DB) {
 	}
 
 	// comprobamos que un libro con ese título existe
-	title := c.PostForm("title")
 	err = db.QueryRow("SELECT CAST(COUNT(title) as BIT) FROM Books WHERE title LIKE '%'+ @title + '%'", sql.Named("title", title)).Scan(&bookExists)
 	if err != nil {
 		log.Println(err)
@@ -60,8 +65,8 @@ func AddRead(c *gin.Context, db *sql.DB) {
 	// si el libro existe y la lectura no, se añade la lectura
 	if bookExists && !readExists {
 		_, err = db.Exec(
-			"INSERT INTO Reads(userID, bookID) SELECT TOP 1 dbo.GET_USER_ID(@token), id FROM Books WHERE title LIKE '%'+ @title + '%'",
-			sql.Named("token", token), sql.Named("title", title))
+			"INSERT INTO Reads(userID, bookID, rating) SELECT TOP 1 dbo.GET_USER_ID(@token), id, @rating FROM Books WHERE title LIKE '%'+ @title + '%'",
+			sql.Named("token", token), sql.Named("title", title), sql.Named("rating", rating))
 		if err != nil {
 			log.Println(err)
 		}
@@ -84,7 +89,6 @@ func DeleteRead(c *gin.Context, db *sql.DB, token string) {
 	// si hay algún error (por ejemplo temas de autenticación, etc) mostramos el error
 	if err != nil {
 		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"BookList": GetBooksReadByUser(db, token), "Err": "Couldn't delete read."})
-		log.Println(err.Error())
 		// si es que no se ha insertado mostraremos el error
 	} else if nDeleted, err1 := rows.RowsAffected(); err1 != nil || nDeleted == 0 {
 		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"BookList": GetBooksReadByUser(db, token), "Err": "Couldn't delete read."})

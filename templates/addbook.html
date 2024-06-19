@@ -5,6 +5,7 @@
     <title>Add Book? - NiceBooks</title>
     <link rel="stylesheet" href="../static/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../static/functions.js" type="javascript"></script>
 </head>
 <body>
     <div class="addbook">
@@ -17,6 +18,8 @@
             <input type="text" name="author" required><br>
             <label>Publication date:</label><br>
             <input type="date" name="pubdate" required><br>
+            <label>Your personal rating: <b id="rating">2.5</b> ★</label><br>
+            <input name="rating" oninput="updateRating(this.value)" type="range" value="2.5" min="0" max="5" width="20%" step="0.5"><br>
             <button onclick="history.back()">Back</button>
             <button type="submit">Send</button>
             {{ if .error }}
@@ -24,5 +27,11 @@
             {{ end }}
         </form>
     </div>
+    <script>
+        // apparently creating a js file and calling methods from the templates is not supported
+        function updateRating(val){
+            document.getElementById("rating").innerHTML = val;
+        }
+    </script>
 </body>
 </html>

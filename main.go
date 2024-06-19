@@ -86,7 +86,6 @@ func main() {
 	router.POST("/delete-read", func(c *gin.Context) {
 		if controller.CheckCookies(c, db) {
 			token, _ := c.Cookie("token")
-			log.Println(token)
 			controller.DeleteRead(c, db, token)
 		} else {
 			c.HTML(http.StatusSeeOther, "index.html", gin.H{"error": "Invalid credentials"})

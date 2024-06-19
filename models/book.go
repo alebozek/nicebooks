@@ -7,10 +7,12 @@ import (
 
 // Clase que representa los libros que pueden haber leído los usuarios
 type Book struct {
-	ID      int       `json:"id"`
-	Title   string    `json:"title"`
-	Author  string    `json:"author"`
-	Pubdate time.Time `json:"pubdate"`
+	ID           int       `json:"id"`
+	Title        string    `json:"title"`
+	Author       string    `json:"author"`
+	Pubdate      time.Time `json:"pubdate"`
+	UserRating   float64   `json:"user_rating"`
+	PublicRating float64   `json:"public_rating"`
 }
 
 // Transforma la fecha en algo más legible

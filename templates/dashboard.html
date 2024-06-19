@@ -13,7 +13,9 @@
             <h2>Add a new read</h2>
             <form action="/add-read" method="POST">
                 <label>Title of the Book:</label><br>
-                <input type="text" name="title"><br>
+                <input type="text" name="title" required><br>
+                <label>Rating: <b id="rating">2.5</b> ★</label><br>
+                <input name="rating" oninput="updateRating(this.value)" type="range" value="2.5" min="0" max="5" width="20%" step="0.5"><br>
                 <button>Add</button>
                 {{ if .Err }}
                     <p style="color: red">{{ .Err }}</p>
@@ -27,7 +29,9 @@
                     <tr>
                         <th>Title</th>
                         <th>Author</th>
-                        <th>Publication date</th>
+                        <th>Published</th>
+                        <th>Your rating</th>
+                        <th>Public rating</th>
                         <th>¿Delete?</th>
                     </tr>
                 </thead>
@@ -39,6 +43,8 @@
                             <td>{{ .Title }}</td>
                             <td>{{ .Author }}</td>
                             <td>{{ .TransformDate }}</td>
+                            <td>{{ .UserRating }}<span> ★</span></td>
+                            <td>{{ .PublicRating }}<span> ★</span></td>
                             <td> <button type="submit" style="background-color:red">Delete</button></td>
                         </form>
                     </tr>
@@ -47,5 +53,10 @@
             </table>
         </div>
     </div>
+    <script>
+        function updateRating(val){
+            document.getElementById("rating").innerHTML = val;
+        }
+    </script>
 </body>
 </html>

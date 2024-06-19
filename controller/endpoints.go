@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"nicebooks/models"
 	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -65,6 +66,7 @@ func Register(c *gin.Context, db *sql.DB) {
 			sql.Named("username", user.Username), sql.Named("password", user.Password), sql.Named("email", user.Email))
 		// si falla cargamos el error en register.html
 		if err != nil {
+			log.Println("Insert failed:", err)
 			c.HTML(http.StatusOK, "register.html", gin.H{"error": err.Error()})
 		}
 		// si el usuario es válido y no hay fallos, crearemos una cookie con el nombre de usuario y la contraseña
@@ -72,6 +74,7 @@ func Register(c *gin.Context, db *sql.DB) {
 		// después redireccionaremos al usuario al login
 		c.Redirect(http.StatusSeeOther, "/")
 	} else {
+		log.Println("Invalid credentials were presented")
 		c.HTML(http.StatusOK, "register.html", gin.H{"error": "Invalid user or already exists."})
 	}
 }
@@ -126,6 +129,11 @@ func AddBook(c *gin.Context, DB *sql.DB) {
 	var err error
 	book.Title = c.PostForm("title")
 	book.Author = c.PostForm("author")
+	book.UserRating, err = strconv.ParseFloat(c.PostForm("rating"), 64)
+	if err != nil {
+		log.Println("Invalid book rating: " + err.Error())
+		c.HTML(http.StatusSeeOther, "index.html", gin.H{"error": "Invalid book rating"})
+	}
 	book.Pubdate, err = time.Parse("2006-01-02", c.PostForm("pubdate"))
 	// si no se puede parsear la fecha correctamente mostraremos un error
 	if err != nil {
