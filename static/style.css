@@ -64,17 +64,12 @@ button {
 }
 
 .editbook{
-    font-size: 16px;
-}
-
-label{
-    display: inline-block;
-    margin-top: 10px;
+    font-size: 2vw;
 }
 
 .editbook > form > input[type=text], .editbook > form > input[type=date]{
     text-align: center;
-    font-size: 16px;
+    font-size: 1.5vw;
     width: 15vw !important;
 }
 
