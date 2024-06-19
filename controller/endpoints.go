@@ -13,7 +13,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const DOMAIN = "nicebooks.onrender.com"
+// const DOMAIN = "nicebooks.onrender.com"
+const DOMAIN = "localhost"
 
 // Comprueba si los campos proporcionados por el usuario cumplen con las normativas de seguridad y si el usuario no existe
 func ValidateUser(user models.User, db *sql.DB) bool {

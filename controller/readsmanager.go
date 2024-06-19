@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"nicebooks/models"
+	"strconv"
+	"time"
 )
 
 // Devuelve un slice con todos los libros que ha leído el usuario
@@ -29,6 +31,18 @@ func GetBooksReadByUser(db *sql.DB, token string) (books []models.Book) {
 	}
 
 	return bookList
+}
+
+func GetBookByRead(db *sql.DB, token string, id int) (models.Book, error) {
+	var book models.Book
+
+	err := db.QueryRow("SELECT * FROM dbo.GET_BOOK_READ(@id, @token)",
+		sql.Named("id", id), sql.Named("token", token)).Scan(&book.ID, &book.Title, &book.Author, &book.Pubdate, &book.UserRating)
+	if err != nil {
+		log.Println(err)
+	}
+
+	return book, err
 }
 
 // Agrega una lectura a la base de datos y si no existe el libro redirecciona a una página para añadirlo
@@ -94,6 +108,57 @@ func DeleteRead(c *gin.Context, db *sql.DB, token string) {
 		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"BookList": GetBooksReadByUser(db, token), "Err": "Couldn't delete read."})
 	} else {
 		// si se completa satisfactoriamente redireccionamos al dashboard
+		c.Redirect(http.StatusSeeOther, "/dashboard")
+	}
+}
+
+func EditRead(c *gin.Context, db *sql.DB, token string) {
+	var book models.Book
+	var err error
+	book.ID, err = strconv.Atoi(c.PostForm("bookid"))
+	if err != nil {
+		log.Println("Invalid book id")
+		c.Redirect(http.StatusSeeOther, "/")
+	}
+	book.Title = c.PostForm("title")
+	book.Author = c.PostForm("author")
+	book.UserRating, err = strconv.ParseFloat(c.PostForm("rating"), 64)
+	if err != nil {
+		log.Println("Invalid book rating")
+		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"BookList": GetBooksReadByUser(db, token), "Err": "Could not edit the book."})
+	}
+	book.Pubdate, err = time.Parse("2006-01-02", c.PostForm("pubdate"))
+	// si no se puede parsear la fecha correctamente mostraremos un error
+	if err != nil {
+		log.Println(err.Error())
+		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"BookList": GetBooksReadByUser(db, token), "Err": "Could not edit the book."})
+	}
+
+	log.Println(book)
+
+	// empezamos la transacción
+	transaction, err := db.Begin()
+	if err != nil {
+		log.Println(err)
+		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"BookList": GetBooksReadByUser(db, token), "Err": "Could not edit the book."})
+	}
+	// ejecutamos la query
+	var rows sql.Result
+	rows, err = transaction.Exec("EXEC dbo.UPDATE_BOOK_READ @token, @bookID, @title, @author, @pubdate, @rating",
+		sql.Named("token", token), sql.Named("bookID", book.ID), sql.Named("title", book.Title),
+		sql.Named("author", book.Author), sql.Named("pubdate", book.Pubdate), sql.Named("rating", book.UserRating))
+	if err != nil {
+		log.Println(err)
+		transaction.Rollback()
+		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"BookList": GetBooksReadByUser(db, token), "Err": "Could not edit the book."})
+	}
+
+	nRowsAffected, err1 := rows.RowsAffected()
+	if err1 != nil || nRowsAffected != 2 {
+		transaction.Rollback()
+		c.HTML(http.StatusSeeOther, "dashboard.html", gin.H{"Err": "Could not edit the book."})
+	} else {
+		transaction.Commit()
 		c.Redirect(http.StatusSeeOther, "/dashboard")
 	}
 }

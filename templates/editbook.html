@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit - NiceBooks</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <h1>Edit book information</h1>
+    <div class="editbook">
+        <form action="/edit-read" method="POST">
+            <input type="hidden" name="bookid" value="{{ .book.ID }}">
+            <label>Title:</label><br>
+            <input type="text" name="title" value="{{ .book.Title }}" required><br>
+            <label>Author:</label><br>
+            <input type="text" name="author" value="{{ .book.Author }}" required><br>
+            <label>Publication:</label><br>
+            <input type="date" name="pubdate" value="{{ .book.TransformDate }}" required><br>
+            <label>Your rating: <b id="rating">{{ .book.UserRating }}</b> ★</label><br>
+            <input name="rating" oninput="updateRating(this.value)" type="range" step="0.5" min="0" max="5" value="{{ .book.UserRating }}" required><br>
+            <button onclick="history.back()">Back</button>
+            <button type="submit">Send</button>
+            {{ if .error }}
+            <p style="color: red">{{ .error }}</p>
+            {{ end }}
+        </form>
+    </div>
+<script>
+    function updateRating(val){
+        document.getElementById("rating").innerHTML = val;
+    }
+</script>
+</body>
+</html>

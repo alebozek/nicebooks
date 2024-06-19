@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"nicebooks/controller"
 	"nicebooks/models"
+	"strconv"
 )
 
 var db *sql.DB
@@ -83,6 +84,7 @@ func main() {
 		controller.AddRead(c, db)
 	})
 
+	// borra lecturas
 	router.POST("/delete-read", func(c *gin.Context) {
 		if controller.CheckCookies(c, db) {
 			token, _ := c.Cookie("token")
@@ -90,7 +92,34 @@ func main() {
 		} else {
 			c.HTML(http.StatusSeeOther, "index.html", gin.H{"error": "Invalid credentials"})
 		}
+	})
 
+	// endpoint para modificar libros y su rating
+	router.GET("/edit-read/:id", func(c *gin.Context) {
+		if controller.CheckCookies(c, db) {
+			token, _ := c.Cookie("token")
+			idForm := c.Param("id")
+			id, err := strconv.Atoi(idForm)
+			if err != nil {
+				c.HTML(http.StatusOK, "index.html", gin.H{"error": "Invalid id."})
+			}
+			book, err := controller.GetBookByRead(db, token, id)
+			if err != nil {
+				c.HTML(http.StatusSeeOther, "editbook.html", gin.H{"book": book, "error": err})
+			}
+			c.HTML(http.StatusSeeOther, "editbook.html", gin.H{"book": book, "error": nil})
+		} else {
+			c.HTML(http.StatusOK, "index.html", gin.H{"error": "Invalid credentials."})
+		}
+	})
+
+	router.POST("/edit-read", func(c *gin.Context) {
+		if controller.CheckCookies(c, db) {
+			token, _ := c.Cookie("token")
+			controller.EditRead(c, db, token)
+		} else {
+			c.HTML(http.StatusSeeOther, "index.html", gin.H{"error": "Invalid credentials."})
+		}
 	})
 
 	// comprobamos que no se producen errores y si se producen, se mostrarán por pantalla

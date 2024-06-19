@@ -32,10 +32,15 @@ input[type=text], input[type=password], input[type=email] {
     width: 20vh;
     border: 1px #586F7C solid;
     border-radius: 5px;
+
 }
 
 input[type=range] {
     accent-color: #04724d;
+}
+
+td > button, td > a > button {
+    width: 1.8em;
 }
 
 button {
@@ -50,7 +55,7 @@ button {
 }
 
 
-.addreads, .reads, .addbook {
+.addreads, .reads, .addbook, .editbook {
     margin: 20px;
     background-color: white;
     padding: 10px;
@@ -58,7 +63,17 @@ button {
     border-radius: 20px;
 }
 
-.addreads > form, .addbook > form {
+.editbook{
+    font-size: 2vw;
+}
+
+.editbook > form > input[type=text], .editbook > form > input[type=date]{
+    text-align: center;
+    font-size: 1.5vw;
+    width: 15vw !important;
+}
+
+.addreads > form, .addbook > form, .editbook > form{
     text-align: center;
 }
 
@@ -84,7 +99,7 @@ table {
     width: 100%;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
     body {
         margin: 0;
         padding: 0;
@@ -112,12 +127,12 @@ table {
     }
 
     table {
-        font-size: 15px;
+        font-size: 2.4vw;
     }
 }
 
-@media only screen and (min-width: 768px){
-    .reads {
+/*@media only screen and (min-width: 768px){
+   .reads {
         float: right;
         width: 60%;
     }
@@ -135,4 +150,4 @@ table {
         justify-content: center;
     }
     
-}
+}*/
